@@ -781,7 +781,7 @@ back to your aws server (linux )
 
 - when you paste that run the command  " cd "it takes to your home directory 
 - change the permission of the file you just created in the linux server by running the command 
-  chmod 400 .ssh/authorized_keys
+  chmod 600 .ssh/authorized_keys
 
 ### Step 4 
 - On your local computer you can now try to login as the user e.g ssh username@public.ip  ( ssh calson@3.144.176.125)
@@ -864,9 +864,409 @@ for moving of files :  mv <filename or directory u want to move> <location where
 + tree 
 
  
+`FILE or DIRECTORY TRANSFER COMMANDS`
 
- FILE TRANSFER 
+File Transfer can be accomplish using different methods ,depending certain requirements ( location of the file , size of the file , type operating system )
+
+`scp - secure copy protocol ]`
+
++ You can transfer a file from One user to another within the same server (linux)
++ You transfer a file from one Linux operating system in aws to another Linux Operating system in aws 
++ You can transfer a file from your local environment ( your own laptop or computer) to a server in aws (cloud)
+
+scp "filename" or path to the file  username@hostname:destination location or folder or path 
+
+scp text.txt calson@52.60.241.39:/home/calson/calson-backup
+
+e.g 
+
+scp text.txt calson@52.60.241.39:/home/calson/calson-backup
+scp /Users/calson.njinoh/text.txt calson@52.60.241.39:/home/calson/calson-backup
 
 
+
+USE CASE: Backup and File Transfers 
+
+
+`rsync` : 
+
+This command helps to transfer and synchronized files between directories or across different network systems (servers).
+This is mostly used by Linux Operating Systems
+
+USE CASE: Backup , Mirroring and File Transfers 
+
+### Features of rsync 
+
++ It has incremental file transfer : It transfers only the changes in the files this is helpful because it reduces network bandwith & it helps in synchronizing files process 
+
++ It has compression whereby it reduces the amount of data sent the network by compressing it while transfering the data (information)
+
++ It can preserve (keep) the same file permissions ,ownership ,timestamps , symbolics and other file attributes 
+
+rsync -a (archive mode): 
+rsync -v (verbose) : Provides detailed info about the transfer process
+rsync -z (compress) : Its going to compress the file data while transfering
+rsync -h (human readable) : Its going to ouput formats in human readble 
+rsync --progress : This shows you the progress of the transfer
+rsync -r (recursively) : Copy directories 
+rsync -e : use ssh for remote transfer 
+
+
+e.g 
+
+`rsync -avz text.txt calson@52.60.241.39:/home/calson/calson-backup`
+
+
+
+`sftp ( SSH file Transfer Protocol )`
+
+This is a secured means to transfer files between two systems over secure ssh connection . 
+
+sftp username@ipaddress (hostname) 
+when it says connected you can now run the `put "filename"` , get , ls ,cd 
+
+example: sftp nana@3.15.179.32
+
+
+
+`ftp ( File Transfer Protocol):`
+
+This is one of the oldest methods of transfering files from client server to server on a network 
+This method is not secured as sftp and scp 
+
+
+
+
+
+**LINUX FILE & DIRECTORY PERMISSION MANAGEMENT ***
+
+Linux OS - Support multi users 
+
+In linux we have files and directories and each of these files or directories have permissions
+the permissions authorized who can read , make changes to the file or execute the file 
+
+On linux there are different types of permissions you can give a user to manage files or directories 
+
+R = Read permission 
+W = Write permisison 
+X = Execute permission 
+- = No Permission 
+
+
+Who can we assign permissions to ? 
+In linux we can categorize users when it comes to file and directory permissions in the follow categories 
+
++ Users  ---3 permissions 
++ Groups ---3 permissions 
++ Others ( world ) --- 3 permission 
+
+How can we check files or directory permission on the linux operating system 
+
+`ls - l `
+
+-rw-   rw-     r--         1                 calson  calson    0           Oct 14 00:06                    demo.txt
+user   group.  other  number of hardlinks     user    group    file size   last modification time             file name 
+
+
+d          rwx    rwx      r-x    2 calson calson 4096 Oct 14 00:29 calson-backup
+directory  user   group   other
+
++ user who created the file or owns the file 
++ group the group that also owns the file 
+
+`NOTE` : A Directory can have different permission and the files inside the directory will have a different permission as well 
+
+
+
+Two ways we can change permissions on a file or directory 
+
+`Numberic (Octal) Mode `
+
+
+The numeric uses numbers to calculate and change permissions for files and directories 
+
+Read: (r) = 4 
+Write: (w) = 2 
+Execute : (x) = 1 
+No permission : (-) = 0 
+
+The command we will use to change permissions is 
+
+`chmod` 
+
+chmod 400 <filename>
+
+
+
+-rw-rw-r-- 1 calson calson    0 Oct 14 00:06 demo.txt
+4+2 4+2 4 
+6    6  4 
+chmod 664 demo.txt
+
+
+chmod 777 demo.txt 
+-rwx rwx rwx 1 calson calson    0 Oct 14 00:06 demo.txt
+
+
+
+
+`Symbolic Mode` 
+
+This method uses letters & symbols to change the file permissions 
+
+Who | Operator | Permmission 
+
+Who : = To whom you wish to set the permission ( user or group or others )
+Operator : = can be + ( add a permission) , - ( remove a permission) = ( set exact permission)
+Permissions : = R ( Read ) (Write) (w) , Execute (X) , (-) No permission
+
+e.g chmod u+rw , g+r ,o+r <filename>
+
+-rwx rwx rwx 1 calson calson    0 Oct 14 00:06 demo.txt
+
+chmod    u-x,    g-wx,    o-wx     demo.txt
+         users   group.   others 
+
+
+
+Note; Directory Has seperate permissions regardless of what the files have as permissions
+
+
+
+`How to change ownership of a file or directory `
+
+`chown` : means change ownership 
+
+`sudo chown "username" "filename" ` 
+
+
+ Only the owner of a file or the root user can change the ownership of a file 
+
+ `chgrp` : means change group  
  
-         
+ `sudo chgrp "groupname"  "filename" ` this will change the name of the group for that particular file 
+
+
+
+
+
+
+# LINUX DIRECTORY STRUCTURE  (FILE STRUCTURE)  / = ROOT directory 
+
+
+Unix -----linux ---> files and directories 
+
+Files / Directories 
+
+`/` =  Root Directory  : This is the top level directory in the Linux file system . All other directories within the system lives inside this directory and that is why its called the root 
+
+`/bin ` (Binaries) :  This directory (folder) contains files which we call them ( Binary Files ) . These binary files are commands that the linux system understands .This is where all the command we run are saved or stored 
+
+
+`/opt ` : This directory (folder) by default comes empty and is reserved to store external or additional software packages that users will download in the operating system (best practise download new softwares in the opt directories )
+
+`/boot` : This directory (folder) contains files that helps the operating system (Linux Kernel) to start up succesfully (configuration files )
+
+`/root` (root home directory)
+
+This is the home directory of the root user . 
+
+`/dev` (devices) : It contains device files that represents hardware and virtual devices (/dev/sda)--> storage represents hard drive 
+
+`/sbin` (System Binaries) ; This directory contains administrative binaries (commands ) .These binaries (commands) helps to carryout task such as , rebooting the operating system (root user)
+
+`/etc` : This contains system wide configuration files and it contains shell scripts used to start and initialized the system 
+
+`/srv` (service data)  ;  It contains data(information) for services provided by the system e.g web server files by default this directory is empty . 
+
+`/home` : The home directory stores users .Each user on the Linux server has its own directory 
+
+`/tmp (temporary files)` : This directory is used to store temporary files created or from your application.At boot the files are deleted 
+
+`/lib ( libraries) `: This contains shared library files ( similar files) required by the binaries /bin and /sbin
+
+`/usr` (user program) : It contains user installed softwares and their binaries (command)and documentation. The usr (user program) directory or folder contains subdirectories  
+
+**sr/bin*  :  It has non-essential commands binaries for all users 
+
+**usr/lib* :  It has libraries for usr/bin and usr/sbin 
+
+**usr/include* :   Its stores standard files used for programming c+ c++  programing 
+
+**usr/local* :  here it contains locally installed sofware and scripts
+
+**usr/share* :  It has architecture independent data (how the software was designed), data like documenation.
+
+**usr/src* : This contains the source code ( usually for the linux kernel or operating system)
+
+**usr/games*: This MMMM by default and contains software or files for games 
+
+**usr/libexec* : This contains executable library files 
+
+`/media ` : This directory serves as a mount point for removable media .
+
+`/mnt` (mount) : This directory is used to temporary mount file system manually ( file storage )
+by default it comes without any files system mounted.the directory is empty 
+
+
+`/var` (variable) : This directory contains files that are expected to increase in size 
+
+**/var/log* : This directory contains log files generated by your system 
+
+**/var/spool* : The spool directory contains cron-jobs ( automated task) , mail task , printer queue 
+
+**/var/cache*: This directory contains Cached Data from your application . 
+
+**/var/tmp* :  These are temporary files that are stored by your system 
+
+
+so far 
+
++ User management commands 
++ Files & Directory commands 
++ Linux File & Directory Tranfer
++ Linux file / Directory permissions 
++ Linux & directory File Structure 
++ Linux process Management 
+
+
+**PROCESS MANAGEMENT IN LINUX** 
+
+
+`What is Linux process Management ?`
+
+This involves you creating , managing , monitor & terminate process in Linux Operating System .
+- Each process running in the operating system has what we call a process I.D .Each process I.D is a unique identifier and this process I.D are  dynamic (changes) . 
+
+
+`Benefits of process Manahement in Linux` 
+
+
++ Resource Optimization 
++ System Stability 
++ For Troubleshooting and Debugging 
++ Security 
++ Performance Tunning (enhancement)
+
+
+
+
+
+
+`Process Management commands in Linux `
+
+----Commands to View Process -----
+
+`top` : it has an interactive command that shows real time view of all the processes running in linux operating system 
+`htop` This is an enhanced version of the top command .It has a more friendly user interface 
+`ps` : This displays running processes for the current user 
+`ps -aux or ps -ef` : This list all processes for all users along with their CPU & Memory usage
+
+----Commands to Control processes-----
+
+`kill <process id >` (pid) : This commands is used to terminate /stop process . 
+`kill all <process-name`   : This will terminate all processes within a given mame 
+`pkill -u <username> ` : This command allows you to kill / stop or terminate processes with specific criteria users , groups ,
+`xkill ` its a graphical tool to terminate mishaving xclient 
+
+---Commands to Manage Processes Priorities Commands----
+
+`nice` e.g `nice -n -20 <process command>` : 
+
+This command starts a process with specific priorities . Niceness levels range from -20 (highest priority) to 19 (lowest priority)
+
+`renice` e.g `renice -n 19 -p <process id > `;  This changes the priority of already running process 
+
+BREAK 9:20 PM EST 
+
+
+---Process Suspension & Background Execution commands----
+
+when you run the htop or top you see processes running in the foreground (active process ) .you can Suspend the processes by sending to the background 
+
+`ctrl + z ` : It suspends the currently running foreground process sending to the background 
+`bg` : Resumes suspended process in the background 
+`fg` : Brings back background processes to the foreground 
+
+
+---Commands to Monitor System Activities----
+
+`vmstat`:  It reports virtual memory statistics , including process ,memory  ,disk and cpu information
+
+procs -----------memory---------- ---swap-- -----io---- -system-- -------cpu-------
+ r  b   swpd   free   buff  cache   si   so    bi    bo   in   cs us sy id wa st gu
+ 0  0      0 256428  18592 453756    0    0    71    19   61    0  0  0 100  0  0  0
+
+
+ processes  
+r : # processes waiting for runtime 
+b : Number of processes in an uninterruptible sleep 
+
+Memory  
+swpd : Amount of memory used in KB 
+free  The amount of memory available (idle)
+buff : amount of memory used as buffers KB 
+Cache : amount of memory used as cache 
+
+Swap 
+si : amt of memory swapped in from disk
+so : amount of memory swapped out to disk
+
+IO( input/ouput)
+bi : Blocks recieved from a block device 
+bo : Blocks sent to a block device 
+
+
+SYSTEM 
+in : The number of interupts per second 
+cs : the number of context switches per second 
+
+CPU 
+(Central processing Unit)
+us : time spend running on non kernel code
+sy :time spend running on kernel code 
+id : time spent in idle 
+wa : time spend waiting for input and output O/I
+st : time stolen from virtual machine
+gu time spend runnin guest os 
+
+
+`pstree` : This displays running processes in a tree format .It shows you parent and child relationship 
+
+
+`Commands to Manage Daemon Process ( systemd)`
+
+`Daemon process` ? A daemon process is simply a background service that runs on a system without you directly interacting with it . Think of it as a program always working quietly in the background waiting to do its job . You dont interact with the program the way you will open apps e.g zoom , whatsapp etc . Daemon process just starts with your operating system and keeps running in the background 
+
+
+`systemctl` 
+
+e.g 
+
+`systemctl` start  [name of service ]
+`systemctl` stop  [name of service ]
+`systemctl` restart  [name of service ]
+`systemctl` status  [name of service ]
+
+
+
+`Zombie process` ? is a process that is already dead but still shows up in the process table . Its called zombie process because its dead but the entry is till alive in the system 
+
+
+***What is the difference between a Zombie Process and a Daemon process ?**
+
+A zombie process is a process that has already finished execution but still has an entry in the process table because the parent hasnt collected its exit status . This means the process is not running but waiting to be clean up  while daemon process on the other is an active background service that runs continously to provide system functionaly like sshd or (nginx or apache )  - webservers
+
+
+---Commands to View Porcess Status----
+
+`pidof `e.g pidoff <program name> : It finds the process id of a running program 
+
+`pgrep` : searches for processes based on name and other attributes 
+
+
+**Hardware Management Commands** 
+
+**Networking Commands**
+
+**Package Management Commands*** 
